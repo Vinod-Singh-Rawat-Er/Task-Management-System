@@ -19,14 +19,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    return redirect('/dashboard');
+});
 
 Route::middleware('auth')->group(function () {
+    
+    //Dashboard
+    Route::get('/dashboard', [UserController::class, 'dashboard'])->middleware(['verified'])->name('dashboard');
+
+    //Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -54,6 +55,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/tasks/edit/{id}', [TaskController::class, 'edit'])->name('tasks.edit');
     Route::post('/tasks/update/{id}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('/tasks/delete', [TaskController::class, 'destroy'])->name('tasks.delete');
+
+    
+    Route::post('/tasks/complete', [TaskController::class, 'markAsDone'])->name('tasks.markasdone');
     
     // Users
     Route::get('/users', [UserController::class, 'index'])->name('users.index');

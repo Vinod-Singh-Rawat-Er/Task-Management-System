@@ -45,7 +45,7 @@
                     </tr>
                     @endforeach
                     @else
-                    <tr><td colspan="4">No Permissions Available</td></tr>
+                    <tr><td colspan="4" class="text-center">No Permissions Available!</td></tr>
                     @endif
                 </tbody>
             </table>

@@ -47,7 +47,7 @@
                     </tr>
                     @endforeach
                     @else
-                    <tr><td colspan="4">No Roles Available</td></tr>
+                    <tr><td colspan="5" class="text-center">No Roles Available!</td></tr>
                     @endif
                 </tbody>
             </table>

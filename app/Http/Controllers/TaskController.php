@@ -6,8 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\TaskNotification;
 use App\Models\User;
 use App\Models\Task;
+
 
 class TaskController extends Controller
 {
@@ -60,6 +64,14 @@ class TaskController extends Controller
             $tasks->description = $request->description;
             $tasks->save();
 
+            $user = User::find($request->assigned_user);
+
+            $data = [
+                'title' => 'A new task added.',
+                'message' => "You've assigned a new task. Please login to your dashboard."
+            ];
+
+            $notify = Notification::send($user, new TaskNotification($data));
             return redirect()->route('tasks.index')->with('success', 'Tasks create sucessfully.');
         }else{
             return redirect()->route('tasks.create')->withInput()->withErrors($validator);
@@ -132,5 +144,35 @@ class TaskController extends Controller
             return response()->json([
                 'status' => true
             ]);
+    }
+
+    public function markAsDone(Request $request){
+        $id= $request->id;
+        $tasks = Task::find($id);
+
+        
+        if($tasks == null){
+            session()->flash('error', 'Task not found');
+            return response()->json([
+                'status' => false
+            ]);
+        }
+        
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            
+            $filePath = $file->storeAs('public/uploads/Tasks', $filename);
+            // dd(str_replace('public/','',$filePath));
+            $path = str_replace('public/','',$filePath);
+        }
+        $tasks->file= $path;
+        $tasks->status= 1;
+        $tasks->save();
+
+        session()->flash('success', 'Task completed successfully.');
+        return response()->json([
+            'status' => true
+        ]);
     }
 }

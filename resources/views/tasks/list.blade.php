@@ -30,11 +30,16 @@
                         <td class="px-6 py-6 text-left">{{ $value->title }}</td>
                         <td class="px-6 py-6 text-left">{{ $value->description }}</td>
                         <td class="px-6 py-6 text-left">
+                            @if($value->status)
+                            <span class="bg-green-600 text-sm text-white px-3 py-2">Completed</span>
+                            @else
                             {{ \Carbon\Carbon::parse($value->due_date)->format('d M, Y') }}
+                            @endif
                         </td>
                         <td class="px-6 py-3 text-center">
+                            
                             @can('edit tasks')
-                            <a href="{{ route('tasks.edit', $value->id) }}" class="bg-green-600 text-sm rounded-md text-white px-3 py-2">
+                            <a href="{{ route('tasks.edit', $value->id) }}" class="bg-green-600 text-sm rounded-md text-white px-2 py-1">
                                 Edit
                             </a>
                             @endcan
@@ -47,7 +52,7 @@
                     </tr>
                     @endforeach
                     @else
-                    <tr><td colspan="4">No Tasks Available</td></tr>
+                    <tr><td colspan="5" class="text-center">No Tasks Available!</td></tr>
                     @endif
                 </tbody>
             </table>
